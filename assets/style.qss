@@ -1,0 +1,86 @@
+/* Main Window Background */
+QWidget {
+    background-color: #202020;
+    color: #ffffff;
+    font-family: "Segoe UI Variable", "Segoe UI", sans-serif;
+    font-size: 14px;
+}
+
+/* Display Screen */
+QLineEdit {
+    background-color: #202020;
+    border: none;
+    font-size: 48px;
+    font-weight: bold;
+    padding: 0px 10px;
+    margin-bottom: 10px;
+    color: #ffffff;
+}
+
+/* Base Button Style */
+QPushButton {
+    background-color: #323232;
+    border: 1px solid #202020; /* Thin border to separate grid */
+    border-radius: 4px;
+    font-size: 16px;
+    min-width: 60px;
+    min-height: 45px;
+}
+
+QPushButton:hover {
+    background-color: #3b3b3b;
+}
+
+QPushButton:pressed {
+    background-color: #2d2d2d;
+}
+
+/* Number Buttons (Slightly different shade or bold) */
+QPushButton#num-btn {
+    background-color: #3b3b3b;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+QPushButton#num-btn:hover {
+    background-color: #323232;
+}
+
+/* The Blue Equals Button */
+QPushButton#equal-btn {
+    background-color: #76b9ed;
+    color: #000000;
+    border: none;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+QPushButton#equal-btn:hover {
+    background-color: #64a6d6;
+}
+
+QPushButton#equal-btn:pressed {
+    background-color: #528ab5;
+}
+
+/* Labels (History, Memory, Headers) */
+QLabel {
+    color: #a0a0a0;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* History Dock */
+QTableView {
+    background-color: #202020;
+    gridline-color: #323232;
+    color: white;
+    border: none;
+}
+
+QHeaderView::section {
+    background-color: #2d2d2d;
+    color: white;
+    border: none;
+    padding: 4px;
+}
