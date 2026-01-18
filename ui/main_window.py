@@ -3,8 +3,7 @@ from PyQt6.QtWidgets import (
     QTabWidget, QLabel, QHBoxLayout, QDockWidget, QTableView, QHeaderView,
     QMessageBox, QAbstractItemView, QSizePolicy
 )
-from PyQt6.QtCore import Qt
-from PyQt6.QtCore import QAbstractTableModel    
+from PyQt6.QtCore import Qt, QAbstractTableModel
 
 from core.calculator import CalculatorEngine
 from core.history import HistoryManager
@@ -41,12 +40,12 @@ class PandasModel(QAbstractTableModel):
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Calculator")
-        self.setMinimumSize(400, 650) # Taller window for the new layout
+        self.setWindowTitle("PyScientific Calculator")
+        self.setMinimumSize(420, 700) # Adjusted size for 8-row grid
 
         self.calc_engine = CalculatorEngine()
         self.history_manager = HistoryManager()
-        self.current_mode = 'DEG' # Matches screenshot default
+        self.current_mode = 'DEG' # Default to Degrees
 
         self._create_menu_bar()
         self._setup_main_ui()
@@ -60,7 +59,6 @@ class MainWindow(QMainWindow):
             print("Warning: style.qss not found.")
 
     def _create_menu_bar(self):
-        # We can implement a custom hamburger menu later, keeping standard for now
         menu = self.menuBar()
         view_menu = menu.addMenu("&View")
         self.toggle_history_action = view_menu.addAction("&History Panel")
@@ -70,7 +68,7 @@ class MainWindow(QMainWindow):
     def _setup_main_ui(self):
         container = QWidget()
         main_layout = QVBoxLayout()
-        main_layout.setContentsMargins(0, 0, 0, 0) # Edge to edge look
+        main_layout.setContentsMargins(0, 0, 0, 0)
         main_layout.setSpacing(0)
         container.setLayout(main_layout)
         self.setCentralWidget(container)
@@ -92,29 +90,27 @@ class MainWindow(QMainWindow):
         layout.setSpacing(2)
         layout.setContentsMargins(10, 10, 10, 10)
         
-        # 1. Display Screen (Large, right aligned)
+        # 1. Display Screen
         self.display = QLineEdit("0")
         self.display.setAlignment(Qt.AlignmentFlag.AlignRight)
         self.display.setReadOnly(True)
-        self.display.setFixedHeight(80) # Bigger display
+        self.display.setFixedHeight(80)
         layout.addWidget(self.display)
 
-        # 2. Mode & Memory Row (DEG, F-E, Memory)
+        # 2. Mode & Memory Row
         mem_layout = QHBoxLayout()
         self.mode_label = QPushButton("DEG")
         self.mode_label.setFlat(True)
-        self.mode_label.clicked.connect(self._toggle_mode) # Click to toggle DEG/RAD
+        self.mode_label.clicked.connect(self._toggle_mode)
         self.mode_label.setStyleSheet("text-align: left; font-weight: bold; color: white;")
         
         fe_btn = QPushButton("F-E")
         fe_btn.setFlat(True)
         
-        # Spacer to push memory buttons right
         mem_layout.addWidget(self.mode_label)
         mem_layout.addWidget(fe_btn)
         mem_layout.addStretch()
 
-        # Simple Memory Placeholders
         for m_text in ["MC", "MR", "M+", "M-", "MS"]:
             m_btn = QPushButton(m_text)
             m_btn.setFlat(True)
@@ -123,34 +119,33 @@ class MainWindow(QMainWindow):
         
         layout.addLayout(mem_layout)
 
-        # 3. The Grid (5 Columns, 7 Rows)
+        # 3. The Grid (5 Columns, 8 Rows)
         grid_layout = QGridLayout()
         grid_layout.setSpacing(2)
 
-        # Grid Map matching the screenshot
-        # (Text, Row, Col, Type)
         buttons_map = [
-            # Row 1
-            ('2nd', 0, 0, 'func'), ('pi', 0, 1, 'func'), ('e', 0, 2, 'func'), ('C', 0, 3, 'func'), ('⌫', 0, 4, 'func'),
-            # Row 2
-            ('x^2', 1, 0, 'op'), ('1/x', 1, 1, 'op'), ('|x|', 1, 2, 'func'), ('exp', 1, 3, 'func'), ('mod', 1, 4, 'op'),
-            # Row 3
-            ('sqrt', 2, 0, 'func'), ('(', 2, 1, 'func'), (')', 2, 2, 'func'), ('n!', 2, 3, 'func'), ('/', 2, 4, 'op'),
-            # Row 4
-            ('x^y', 3, 0, 'op'), ('7', 3, 1, 'num'), ('8', 3, 2, 'num'), ('9', 3, 3, 'num'), ('*', 3, 4, 'op'),
-            # Row 5
-            ('10^x', 4, 0, 'op'), ('4', 4, 1, 'num'), ('5', 4, 2, 'num'), ('6', 4, 3, 'num'), ('-', 4, 4, 'op'),
-            # Row 6
-            ('log', 5, 0, 'func'), ('1', 5, 1, 'num'), ('2', 5, 2, 'num'), ('3', 5, 3, 'num'), ('+', 5, 4, 'op'),
-            # Row 7
-            ('ln', 6, 0, 'func'), ('+/-', 6, 1, 'func'), ('0', 6, 2, 'num'), ('.', 6, 3, 'num'), ('=', 6, 4, 'eq')
+            # Row 1: Trigonometry
+            ('sin', 0, 0, 'func'), ('cos', 0, 1, 'func'), ('tan', 0, 2, 'func'), ('C', 0, 3, 'func'), ('⌫', 0, 4, 'func'),
+            # Row 2: Inverse Trig
+            ('asin', 1, 0, 'func'), ('acos', 1, 1, 'func'), ('atan', 1, 2, 'func'), ('mod', 1, 3, 'op'), ('exp', 1, 4, 'func'),
+            # Row 3: Constants & Basic Sci
+            ('pi', 2, 0, 'func'), ('e', 2, 1, 'func'), ('|x|', 2, 2, 'func'), ('x^2', 2, 3, 'op'), ('1/x', 2, 4, 'op'),
+            # Row 4: Roots & Powers
+            ('sqrt', 3, 0, 'func'), ('(', 3, 1, 'func'), (')', 3, 2, 'func'), ('n!', 3, 3, 'func'), ('/', 3, 4, 'op'),
+            # Row 5: Numbers
+            ('x^y', 4, 0, 'op'), ('7', 4, 1, 'num'), ('8', 4, 2, 'num'), ('9', 4, 3, 'num'), ('*', 4, 4, 'op'),
+            # Row 6: Numbers
+            ('10^x', 5, 0, 'op'), ('4', 5, 1, 'num'), ('5', 5, 2, 'num'), ('6', 5, 3, 'num'), ('-', 5, 4, 'op'),
+            # Row 7: Numbers
+            ('log', 6, 0, 'func'), ('1', 6, 1, 'num'), ('2', 6, 2, 'num'), ('3', 6, 3, 'num'), ('+', 6, 4, 'op'),
+            # Row 8: Zero & Equals
+            ('ln', 7, 0, 'func'), ('+/-', 7, 1, 'func'), ('0', 7, 2, 'num'), ('.', 7, 3, 'num'), ('=', 7, 4, 'eq')
         ]
 
         for text, r, c, btn_type in buttons_map:
             btn = QPushButton(text)
             btn.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
             
-            # Styling based on Type
             if btn_type == 'num':
                 btn.setObjectName("num-btn")
                 btn.clicked.connect(lambda checked, t=text: self._on_button_clicked(t))
@@ -169,10 +164,8 @@ class MainWindow(QMainWindow):
                 elif text == 'n!':
                     btn.clicked.connect(lambda: self._on_button_clicked("factorial("))
                 else:
-                    # Generic function handler
                     btn.clicked.connect(lambda checked, t=text: self._on_button_clicked(t + '(' if t not in ['(', ')', 'pi', 'e'] else t))
             elif btn_type == 'op':
-                # Map special operators
                 val = text
                 if text == 'x^y': val = '^'
                 if text == '10^x': val = '10^'
@@ -190,7 +183,6 @@ class MainWindow(QMainWindow):
         layout = QVBoxLayout()
         input_layout = QGridLayout()
         
-        # Styled inputs for graphing
         self.func_input = QLineEdit("sin(x)")
         self.func_input.setStyleSheet("font-size: 16px; border: 1px solid #555;")
         self.x_min_input = QLineEdit("-10")
@@ -199,7 +191,7 @@ class MainWindow(QMainWindow):
         self.x_max_input.setStyleSheet("border: 1px solid #555;")
         
         plot_btn = QPushButton("Plot")
-        plot_btn.setObjectName("equal-btn") # Reuse blue button style
+        plot_btn.setObjectName("equal-btn")
         plot_btn.clicked.connect(self._on_plot_clicked)
 
         input_layout.addWidget(QLabel("f(x)="), 0, 0)
@@ -237,7 +229,6 @@ class MainWindow(QMainWindow):
         self.display.setText(text[:-1] if len(text) > 0 else "0")
 
     def _on_negate(self):
-        # Simple negation logic
         text = self.display.text()
         if text.startswith("-"):
             self.display.setText(text[1:])
@@ -246,7 +237,6 @@ class MainWindow(QMainWindow):
 
     def _on_equal_clicked(self):
         expression = self.display.text()
-        # Pass current mode to engine
         self.calc_engine.set_mode(self.current_mode)
         result = self.calc_engine.evaluate(expression)
         self.display.setText(result)
